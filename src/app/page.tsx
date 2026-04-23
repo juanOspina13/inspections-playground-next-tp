@@ -7,9 +7,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-700">
-      <div 
-      dangerouslySetInnerHTML={{ __html: '<div>chipmunk</div>' }}
-      ></div>
       <div className="max-w-6xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center text-white mb-16">
