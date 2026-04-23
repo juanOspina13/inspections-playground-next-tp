@@ -5,21 +5,21 @@ const sections = [
   {
     id: 'what-is-suspense',
     number: 1,
-    title: 'What is Suspense?',
+    title: '¿Qué es Suspense?',
     icon: '⏳',
     color: 'blue',
-    summary: 'A React boundary that shows a fallback UI while its children are "waiting"',
+    summary: 'Una frontera de React que muestra una UI de fallback mientras sus hijos están "esperando"',
     details: [
-      '`<Suspense>` is a React built-in that lets you declaratively define a **loading state** for part of your component tree.',
-      'While a child component is loading (lazy import, async data, image), Suspense shows the `fallback` prop instead.',
-      'Once the child finishes loading, React swaps the fallback for the real content — no `if (loading) return <Spinner />` needed.',
-      'Suspense boundaries can be **nested**: inner boundaries catch loading states first; outer ones act as fallbacks for everything else.',
-      'In Next.js App Router, `loading.tsx` automatically wraps the page in a Suspense boundary with your skeleton as the fallback.',
+      '`<Suspense>` es un componente integrado de React que permite definir de forma declarativa un **estado de carga** para parte del árbol de componentes.',
+      'Mientras un componente hijo está cargando (import lazy, datos async, imagen), Suspense muestra la prop `fallback` en su lugar.',
+      'Una vez que el hijo termina de cargar, React intercambia el fallback por el contenido real — sin necesidad de `if (loading) return <Spinner />`.',
+      'Los límites de Suspense pueden **anidarse**: los internos capturan primero los estados de carga; los externos actúan como fallback de todo lo demás.',
+      'En el App Router de Next.js, `loading.tsx` envuelve automáticamente la página en un límite Suspense con tu skeleton como fallback.',
     ],
     code: `import { Suspense } from 'react';
 
-// Without Suspense — manual loading state (boilerplate)
-function OldWay() {
+// Sin Suspense — estado de carga manual (mucho boilerplate)
+function FormaAntigua() {
   const [loading, setLoading] = useState(true);
   const [data, setData]       = useState(null);
   useEffect(() => { fetchData().then(d => { setData(d); setLoading(false); }); }, []);
@@ -29,90 +29,90 @@ function OldWay() {
 
 // ─────────────────────────────────────────────────────────────
 
-// With Suspense — declarative, no boilerplate
-function NewWay() {
+// Con Suspense — declarativo, sin boilerplate
+function FormaNueva() {
   return (
     <Suspense fallback={<Spinner />}>
-      {/* React shows <Spinner /> until <AsyncDataView /> finishes loading */}
+      {/* React muestra <Spinner /> hasta que <AsyncDataView /> termina de cargar */}
       <AsyncDataView />
     </Suspense>
   );
 }
 
-// Nested boundaries — granular control
+// Límites anidados — control granular
 function Dashboard() {
   return (
-    <Suspense fallback={<PageSkeleton />}>          {/* outer: whole page */}
+    <Suspense fallback={<PageSkeleton />}>          {/* externo: toda la página */}
       <Header />
-      <Suspense fallback={<ChartSkeleton />}>       {/* inner: just the chart */}
+      <Suspense fallback={<ChartSkeleton />}>       {/* interno: solo el gráfico */}
         <RevenueChart />
       </Suspense>
-      <Suspense fallback={<TableSkeleton />}>       {/* inner: just the table */}
+      <Suspense fallback={<TableSkeleton />}>       {/* interno: solo la tabla */}
         <InspectionTable />
       </Suspense>
     </Suspense>
   );
 }`,
-    tip: 'Place Suspense boundaries as close to the loading component as possible. Narrow boundaries mean more of your UI stays interactive while one part loads.',
+    tip: 'Coloca los límites Suspense lo más cerca posible del componente que carga. Límites estrechos significan que más UI permanece interactiva mientras una parte carga.',
   },
   {
     id: 'what-is-lazy',
     number: 2,
-    title: 'What is React.lazy?',
+    title: '¿Qué es React.lazy?',
     icon: '💤',
     color: 'violet',
-    summary: 'Code-split a component into a separate JS chunk — loaded on demand, not upfront',
+    summary: 'Divide un componente en un chunk JS separado — cargado bajo demanda, no al inicio',
     details: [
-      '`React.lazy()` takes a function that returns a dynamic `import()` — the component is only downloaded when first rendered.',
-      'It **code-splits** your bundle: the lazy component\'s JavaScript lives in its own chunk, reducing initial page load.',
-      '`React.lazy` **must** be used with a `<Suspense>` boundary above it — Suspense provides the fallback during the download.',
-      'The imported module must have a **default export** that is a React component.',
-      'In Next.js App Router, `next/dynamic` is the recommended alternative — it supports SSR options that `React.lazy` doesn\'t.',
+      '`React.lazy()` recibe una función que retorna un `import()` dinámico — el componente solo se descarga cuando se renderiza por primera vez.',
+      '**Divide el bundle**: el JavaScript del componente lazy vive en su propio chunk, reduciendo la carga inicial de la página.',
+      '`React.lazy` **debe** usarse con un límite `<Suspense>` superior — Suspense provee el fallback durante la descarga.',
+      'El módulo importado debe tener una **exportación por defecto** que sea un componente de React.',
+      'En el App Router de Next.js, `next/dynamic` es la alternativa recomendada — soporta opciones SSR que `React.lazy` no tiene.',
     ],
     code: `import { lazy, Suspense } from 'react';
 
-// React.lazy — dynamic import, split into separate JS chunk
+// React.lazy — import dinámico, dividido en chunk JS separado
 const HeavyChart    = lazy(() => import('./HeavyChart'));
 const RichTextEditor = lazy(() => import('./RichTextEditor'));
 const MapWidget     = lazy(() => import('./MapWidget'));
 
-// ⚠️  Rules:
-//   1. Must be a default export in the imported module
-//   2. Must be wrapped in <Suspense>
-//   3. Call lazy() at the module level (not inside a component)
+// ⚠️  Reglas:
+//   1. Debe ser una exportación por defecto en el módulo importado
+//   2. Debe estar envuelto en <Suspense>
+//   3. Llama a lazy() al nivel del módulo (no dentro de un componente)
 
-// ✅ Correct usage
+// ✅ Uso correcto
 function Dashboard() {
   return (
-    <Suspense fallback={<div>Loading chart…</div>}>
+    <Suspense fallback={<div>Cargando gráfico…</div>}>
       <HeavyChart data={data} />
     </Suspense>
   );
 }
 
-// ❌ Wrong — lazy() inside a component re-creates on every render
-function Bad() {
-  const Chart = lazy(() => import('./Chart')); // never do this
+// ❌ Incorrecto — lazy() dentro de un componente se recrea en cada render
+function Mal() {
+  const Chart = lazy(() => import('./Chart')); // nunca hagas esto
   return <Chart />;
 }`,
-    tip: 'Always declare lazy() at the module level (top of the file), never inside a component body. Recreating it on every render breaks the caching.',
+    tip: 'Declara siempre lazy() al nivel del módulo (al inicio del archivo), nunca dentro del cuerpo de un componente. Recrearlo en cada render rompe el caché.',
   },
   {
     id: 'spinner-patterns',
     number: 3,
-    title: 'Loading Spinner Patterns',
+    title: 'Patrones de Loading Spinner',
     icon: '🌀',
     color: 'cyan',
-    summary: 'Building accessible, reusable spinners as Suspense fallbacks',
+    summary: 'Construyendo spinners accesibles y reutilizables como fallbacks de Suspense',
     details: [
-      'The `fallback` prop of `<Suspense>` accepts **any React node** — a spinner, skeleton, shimmer, or plain text.',
-      'CSS `animate-spin` (Tailwind) or a CSS animation on a `border-top` creates a simple, dependency-free spinner.',
-      'Always add `role="status"` and `aria-label` to spinners for screen-reader accessibility.',
-      'For content-heavy pages, **skeleton loaders** (gray placeholder shapes) are better than spinners — they reduce perceived wait time.',
-      'You can pass a custom `label` prop to the fallback spinner to describe what is loading (better UX).',
+      'La prop `fallback` de `<Suspense>` acepta **cualquier nodo de React** — un spinner, skeleton, shimmer o texto plano.',
+      'CSS `animate-spin` (Tailwind) o una animación CSS en `border-top` crea un spinner simple sin dependencias.',
+      'Siempre agrega `role="status"` y `aria-label` a los spinners para accesibilidad con lectores de pantalla.',
+      'Para páginas con mucho contenido, los **skeleton loaders** (formas grises de marcador) son mejores que los spinners — reducen el tiempo de espera percibido.',
+      'Puedes pasar una prop `label` personalizada al spinner fallback para describir qué está cargando (mejor UX).',
     ],
-    code: `// Minimal CSS spinner — no library needed
-function Spinner({ label = 'Loading…' }) {
+    code: `// Spinner CSS mínimo — sin librerías necesarias
+function Spinner({ label = 'Cargando…' }) {
   return (
     <div className="flex flex-col items-center gap-3 py-10">
       <span
@@ -125,7 +125,7 @@ function Spinner({ label = 'Loading…' }) {
   );
 }
 
-// Skeleton loader — better for layout-aware loading
+// Skeleton loader — mejor para carga con conciencia del layout
 function InspectionTableSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
@@ -137,58 +137,58 @@ function InspectionTableSkeleton() {
   );
 }
 
-// Usage with Suspense
-<Suspense fallback={<Spinner label="Loading inspection table…" />}>
+// Uso con Suspense
+<Suspense fallback={<Spinner label="Cargando tabla de inspecciones…" />}>
   <InspectionTable />
 </Suspense>
 
 <Suspense fallback={<InspectionTableSkeleton />}>
   <InspectionTable />
 </Suspense>`,
-    tip: 'Skeletons beat spinners for perceived performance. Match the skeleton shape to the real component so the layout doesn\'t shift on reveal.',
+    tip: 'Los skeletons superan a los spinners en rendimiento percibido. Haz que la forma del skeleton coincida con el componente real para que el layout no se desplace al revelarse.',
   },
   {
     id: 'next-dynamic',
     number: 4,
-    title: 'next/dynamic — The Next.js Way',
+    title: 'next/dynamic — El Enfoque de Next.js',
     icon: '▲',
     color: 'slate',
-    summary: 'next/dynamic wraps React.lazy with SSR support and named-export shorthand',
+    summary: 'next/dynamic envuelve React.lazy con soporte SSR y acceso a exportaciones nombradas',
     details: [
-      '`next/dynamic` is Next.js\'s wrapper around `React.lazy` + `Suspense` that adds SSR control.',
-      'Pass `{ ssr: false }` to skip server-side rendering — useful for browser-only components (`window`, `document`, maps, charts).',
-      'It automatically wraps the import in a Suspense boundary when you pass a `loading` option — no need for an explicit `<Suspense>` wrapper.',
-      'With `{ ssr: false }`, the component will only render after hydration, preventing "hydration mismatch" errors.',
-      'Use `React.lazy` for pure React projects; prefer `next/dynamic` inside Next.js App Router for the extra flexibility.',
+      '`next/dynamic` es el wrapper de Next.js alrededor de `React.lazy` + `Suspense` que agrega control SSR.',
+      'Pasa `{ ssr: false }` para omitir el renderizado en servidor — útil para componentes solo del navegador (`window`, `document`, mapas, gráficos).',
+      'Envuelve automáticamente el import en un límite Suspense cuando pasas la opción `loading` — sin necesidad de un wrapper `<Suspense>` explícito.',
+      'Con `{ ssr: false }`, el componente solo se renderiza después de la hidratación, evitando errores de "hydration mismatch".',
+      'Usa `React.lazy` para proyectos React puro; prefiere `next/dynamic` dentro del App Router de Next.js para mayor flexibilidad.',
     ],
     code: `import dynamic from 'next/dynamic';
 
-// 1. Basic — same as React.lazy but Next.js aware
+// 1. Básico — igual que React.lazy pero con conciencia de Next.js
 const HeavyChart = dynamic(() => import('./HeavyChart'));
 
-// 2. With built-in loading state (replaces <Suspense fallback>)
+// 2. Con estado de carga integrado (reemplaza <Suspense fallback>)
 const MapWidget = dynamic(() => import('./MapWidget'), {
-  loading: () => <Spinner label="Loading map…" />,
+  loading: () => <Spinner label="Cargando mapa…" />,
 });
 
-// 3. SSR disabled — for browser-only components
+// 3. SSR desactivado — para componentes solo del navegador
 const RichEditor = dynamic(() => import('./RichEditor'), {
-  ssr: false,          // won't render on server — avoids window/document errors
+  ssr: false,          // no se renderiza en servidor — evita errores de window/document
   loading: () => <div className="h-40 bg-gray-100 animate-pulse rounded" />,
 });
 
-// 4. Named export (React.lazy only supports default exports)
+// 4. Exportación nombrada (React.lazy solo soporta exportaciones por defecto)
 const { BarChart } = dynamic(
   () => import('recharts').then((mod) => ({ default: mod.BarChart })),
   { loading: () => <ChartSkeleton /> }
 );
 
 // ─────────────────────────────────────────────────────────────
-// When to use each:
+// Cuándo usar cada uno:
 //
-//  React.lazy   → Pure React, Vite/CRA projects, RSC trees
-//  next/dynamic → Next.js projects, especially when you need ssr:false`,
-    tip: 'Use `ssr: false` for any component that reads `window`, `document`, or `localStorage` — this prevents the server/client hydration mismatch error.',
+//  React.lazy   → React puro, proyectos Vite/CRA, árboles RSC
+//  next/dynamic → Proyectos Next.js, especialmente cuando necesitas ssr:false`,
+    tip: 'Usa `ssr: false` para cualquier componente que lea `window`, `document` o `localStorage` — esto previene el error de hydration mismatch.',
   },
   {
     id: 'suspense-server',
@@ -196,70 +196,70 @@ const { BarChart } = dynamic(
     title: 'Suspense + Server Components (Streaming)',
     icon: '🌊',
     color: 'indigo',
-    summary: 'In Next.js, Suspense enables streaming — slow server fetches don\'t block the page',
+    summary: 'En Next.js, Suspense habilita el streaming — los fetches lentos del servidor no bloquean la página',
     details: [
-      'In App Router, wrapping an async Server Component in `<Suspense>` enables **streaming** — Next.js sends HTML progressively.',
-      'Fast parts of the page render immediately; slow async Server Components stream in as they finish.',
-      'This is different from `React.lazy` (client-side code splitting) — here Suspense manages **server-side data loading**.',
-      '`loading.tsx` is shorthand for wrapping the entire page segment in `<Suspense fallback={<YourLoading />}>`.',
-      'Granular `<Suspense>` boundaries inside a page give you fine-grained streaming control per component.',
+      'En App Router, envolver un Server Component async en `<Suspense>` habilita el **streaming** — Next.js envía HTML progresivamente.',
+      'Las partes rápidas de la página se renderizan inmediatamente; los Server Components async lentos se transmiten a medida que terminan.',
+      'Esto es diferente de `React.lazy` (code splitting en el cliente) — aquí Suspense gestiona la **carga de datos en el servidor**.',
+      '`loading.tsx` es un atajo para envolver todo el segmento de página en `<Suspense fallback={<TuLoading />}>`.',
+      'Los límites `<Suspense>` granulares dentro de una página te dan control fino de streaming por componente.',
     ],
     code: `// app/dashboard/page.tsx  ← Server Component (async)
 import { Suspense } from 'react';
 
 export default function DashboardPage() {
-  // No await here — let Suspense stream each section independently
+  // Sin await aquí — dejamos que Suspense haga streaming de cada sección de forma independiente
   return (
     <main>
-      <StaticHeader />                          {/* renders immediately */}
+      <StaticHeader />                          {/* se renderiza inmediatamente */}
 
       <Suspense fallback={<StatsCardsSkeleton />}>
-        <StatsCards />                          {/* async Server Component */}
+        <StatsCards />                          {/* Server Component async */}
       </Suspense>
 
       <Suspense fallback={<ChartSkeleton />}>
-        <RevenueChart />                        {/* slower DB query */}
+        <RevenueChart />                        {/* consulta más lenta a la BD */}
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
-        <InspectionTable />                     {/* even slower query */}
+        <InspectionTable />                     {/* consulta aún más lenta */}
       </Suspense>
     </main>
   );
 }
 
-// Each async component fetches independently:
+// Cada componente async hace fetch de forma independiente:
 async function StatsCards() {
-  const stats = await db.getStats();         // fast: ~50ms
+  const stats = await db.getStats();         // rápido: ~50ms
   return <Cards data={stats} />;
 }
 
 async function RevenueChart() {
-  const revenue = await db.getRevenue();    // medium: ~300ms
+  const revenue = await db.getRevenue();    // medio: ~300ms
   return <Chart data={revenue} />;
 }
 
 async function InspectionTable() {
-  const rows = await db.getAll();           // slow: ~800ms
+  const rows = await db.getAll();           // lento: ~800ms
   return <Table rows={rows} />;
 }
 
-// Result: user sees content progressively instead of waiting 800ms for everything`,
-    tip: 'Think of streaming Suspense as "waterfall elimination" — each component fetches in parallel and renders as soon as it\'s ready.',
+// Resultado: el usuario ve contenido progresivamente en lugar de esperar 800ms por todo`,
+    tip: 'Piensa en el Suspense de streaming como "eliminación del waterfall" — cada componente hace fetch en paralelo y se renderiza en cuanto está listo.',
   },
   {
     id: 'error-boundaries',
     number: 6,
-    title: 'Error Boundaries with Suspense',
+    title: 'Error Boundaries con Suspense',
     icon: '🛡️',
     color: 'red',
-    summary: 'Wrap Suspense in an ErrorBoundary to handle load failures gracefully',
+    summary: 'Envuelve Suspense en un ErrorBoundary para manejar fallos de carga con elegancia',
     details: [
-      'If a lazy component **fails to load** (network error, chunk missing), the error bubbles up through Suspense to the nearest Error Boundary.',
-      'React does not provide a built-in `<ErrorBoundary>` component — you write a class component or use the `react-error-boundary` library.',
-      '`react-error-boundary` provides `<ErrorBoundary>` with a `fallbackRender` prop for a clean, functional API.',
-      'The `resetKeys` prop of `react-error-boundary` re-mounts the boundary when a value changes (e.g., a retry counter).',
-      'In Next.js, `error.tsx` acts as an automatic Error Boundary for a route segment — it catches both server and client errors.',
+      'Si un componente lazy **falla al cargar** (error de red, chunk faltante), el error se propaga a través de Suspense hasta el Error Boundary más cercano.',
+      'React no provee un componente `<ErrorBoundary>` integrado — escribe un componente de clase o usa la librería `react-error-boundary`.',
+      '`react-error-boundary` provee `<ErrorBoundary>` con una prop `fallbackRender` para una API funcional y limpia.',
+      'La prop `resetKeys` de `react-error-boundary` re-monta el boundary cuando un valor cambia (p.ej., un contador de reintentos).',
+      'En Next.js, `error.tsx` actúa como un Error Boundary automático para un segmento de ruta — captura errores del servidor y del cliente.',
     ],
     code: `import { lazy, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -269,13 +269,13 @@ const HeavyWidget = lazy(() => import('./HeavyWidget'));
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-      <p className="text-red-700 font-semibold mb-2">Failed to load component</p>
+      <p className="text-red-700 font-semibold mb-2">Error al cargar el componente</p>
       <p className="text-red-500 text-sm mb-4">{error.message}</p>
       <button
         onClick={resetErrorBoundary}
         className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
       >
-        Retry
+        Reintentar
       </button>
     </div>
   );
@@ -291,62 +291,62 @@ function SafeWidget() {
   );
 }
 
-// In Next.js — app/dashboard/error.tsx handles errors automatically
+// En Next.js — app/dashboard/error.tsx maneja errores automáticamente
 'use client';
 export default function Error({ error, reset }) {
   return (
     <div>
-      <h2>Something went wrong!</h2>
-      <button onClick={reset}>Try again</button>
+      <h2>¡Algo salió mal!</h2>
+      <button onClick={reset}>Reintentar</button>
     </div>
   );
 }`,
-    tip: 'Always pair Suspense with an Error Boundary in production. A missing JS chunk (after a deploy) is a common real-world failure mode.',
+    tip: 'Siempre combina Suspense con un Error Boundary en producción. Un chunk JS faltante (después de un deploy) es un fallo real muy común.',
   },
   {
     id: 'when-to-use',
     number: 7,
-    title: 'When to Use Each Tool',
+    title: 'Cuándo Usar Cada Herramienta',
     icon: '🗺️',
     color: 'teal',
-    summary: 'A practical guide to choosing between React.lazy, next/dynamic, and Suspense streaming',
+    summary: 'Una guía práctica para elegir entre React.lazy, next/dynamic y el streaming de Suspense',
     details: [
-      '**React.lazy**: Use in pure React (Vite/CRA) apps, or when you want explicit `<Suspense>` control in Next.js Client Components.',
-      '**next/dynamic**: Use in Next.js when you need `ssr: false`, a built-in loading option, or named exports from a module.',
-      '**Suspense streaming**: Use in Next.js App Router around async Server Components to progressively deliver slow data.',
-      '**Suspense + loading.tsx**: Use for page-level loading states — the whole route shows a skeleton while its data loads.',
-      '**Don\'t lazy-load everything**: Only split large components (>30 KB) that aren\'t needed on initial render. Over-splitting adds network round-trips.',
+      '**React.lazy**: Úsalo en apps React puro (Vite/CRA) o cuando quieres control explícito de `<Suspense>` en Client Components de Next.js.',
+      '**next/dynamic**: Úsalo en Next.js cuando necesites `ssr: false`, una opción de loading integrada o exportaciones nombradas de un módulo.',
+      '**Streaming con Suspense**: Úsalo en el App Router de Next.js alrededor de Server Components async para entregar datos lentos progresivamente.',
+      '**Suspense + loading.tsx**: Úsalo para estados de carga a nivel de página — toda la ruta muestra un skeleton mientras sus datos cargan.',
+      '**No hagas lazy-load de todo**: Solo divide componentes grandes (>30 KB) que no se necesitan en el render inicial. El exceso de división agrega round-trips de red.',
     ],
-    code: `// Decision guide:
+    code: `// Guía de decisión:
 
-// 1. Large client component, not needed immediately?
-//    → React.lazy (pure React) or next/dynamic (Next.js)
+// 1. ¿Componente cliente grande, no necesario de inmediato?
+//    → React.lazy (React puro) o next/dynamic (Next.js)
 const HeavyEditor = lazy(() => import('./RichTextEditor'));       // ~200KB
 
-// 2. Component uses window / document / browser-only lib?
-//    → next/dynamic with ssr: false
+// 2. ¿El componente usa window / document / librería solo del navegador?
+//    → next/dynamic con ssr: false
 const Leaflet = dynamic(() => import('./MapWidget'), { ssr: false });
 
-// 3. Slow server-side data fetch in App Router?
-//    → async Server Component + <Suspense> for streaming
+// 3. ¿Fetch lento en el servidor con App Router?
+//    → Server Component async + <Suspense> para streaming
 <Suspense fallback={<Skeleton />}>
   <SlowDbComponent />  {/* Server Component */}
 </Suspense>
 
-// 4. Entire page is slow to load?
-//    → loading.tsx (auto Suspense boundary for the route)
+// 4. ¿Toda la página carga lentamente?
+//    → loading.tsx (límite Suspense automático para la ruta)
 // app/dashboard/loading.tsx
 export default function Loading() {
   return <DashboardSkeleton />;
 }
 
 // ─────────────────────────────────────────────────────────────
-// Rule of thumb for bundle splitting:
+// Regla general para dividir el bundle:
 //
-// Worth splitting (lazy):   chart libraries, rich editors, maps,
-//                           modals, drawers, admin panels
-// Not worth splitting:      small components < 5KB, core UI, buttons`,
-    tip: 'Profile your bundle with `next build` + `@next/bundle-analyzer` before adding lazy loading. Only split what\'s actually large.',
+// Vale la pena dividir (lazy):  librerías de gráficos, editores enriquecidos,
+//                               mapas, modales, drawers, paneles de admin
+// No vale la pena dividir:      componentes pequeños < 5KB, UI core, botones`,
+    tip: 'Analiza tu bundle con `next build` + `@next/bundle-analyzer` antes de agregar lazy loading. Solo divide lo que realmente sea grande.',
   },
 ];
 
@@ -374,19 +374,19 @@ export default function SuspenseLazyPage() {
             <span className="text-cyan-400">React.lazy</span>
           </h1>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Declarative loading states, on-demand code splitting, and streaming UI — with
-            a live spinner demo you can interact with.
+            Estados de carga declarativos, división de código bajo demanda y UI de streaming
+            — con un demo en vivo de spinner con el que puedes interactuar.
           </p>
 
           {/* Quick legend */}
           <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
             <span className="flex items-center gap-2 bg-cyan-900/50 border border-cyan-700 rounded-full px-4 py-1.5">
               <span className="inline-block h-3 w-3 rounded-full border-2 border-gray-400 border-t-white animate-spin" />
-              <strong>Suspense</strong> — shows fallback while children load
+              <strong>Suspense</strong> — muestra el fallback mientras los hijos cargan
             </span>
             <span className="flex items-center gap-2 bg-indigo-900/50 border border-indigo-700 rounded-full px-4 py-1.5">
               <span className="text-indigo-300">💤</span>
-              <strong>React.lazy</strong> — loads a component chunk on demand
+              <strong>React.lazy</strong> — carga un chunk de componente bajo demanda
             </span>
           </div>
 
@@ -397,13 +397,13 @@ export default function SuspenseLazyPage() {
               rel="noopener noreferrer"
               className="bg-white text-black font-semibold px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition"
             >
-              React Docs →
+              Documentación →
             </Link>
             <Link
               href="/"
               className="border border-gray-600 text-gray-300 font-semibold px-5 py-2 rounded-full text-sm hover:border-gray-400 transition"
             >
-              ← Back to Home
+              ← Inicio
             </Link>
           </div>
         </div>
@@ -412,7 +412,7 @@ export default function SuspenseLazyPage() {
       {/* Table of contents */}
       <div className="max-w-4xl mx-auto px-4 py-10">
         <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-4">
-          Topics covered
+          Temas cubiertos
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {sections.map((s) => {
@@ -440,8 +440,8 @@ export default function SuspenseLazyPage() {
             <span className="bg-cyan-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">
               LIVE
             </span>
-            <h2 className="text-xl font-bold text-gray-900">Interactive Demo</h2>
-            <span className="text-gray-500 text-sm">— try it yourself</span>
+            <h2 className="text-xl font-bold text-gray-900">Demo Interactivo</h2>
+            <span className="text-gray-500 text-sm">— pruébalo tú mismo</span>
           </div>
           <LazyDemo />
         </div>
@@ -492,7 +492,7 @@ export default function SuspenseLazyPage() {
               {/* Code block */}
               <div className="mt-5 mx-6 rounded-xl overflow-hidden border border-gray-800">
                 <div className="bg-gray-900 px-4 py-2 flex items-center justify-between">
-                  <span className="text-gray-400 text-xs font-mono">Example</span>
+                  <span className="text-gray-400 text-xs font-mono">Ejemplo</span>
                   <div className="flex gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-red-500" />
                     <span className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -507,7 +507,7 @@ export default function SuspenseLazyPage() {
               {/* Tip */}
               <div className="mx-6 mt-4 mb-6">
                 <div className={`rounded-lg border px-4 py-3 text-sm ${colors.tip}`}>
-                  <span className="font-semibold">💡 Tip: </span>
+                  <span className="font-semibold">💡 Consejo: </span>
                   {section.tip}
                 </div>
               </div>
@@ -518,9 +518,9 @@ export default function SuspenseLazyPage() {
 
       {/* Footer CTA */}
       <div className="border-t border-gray-200 bg-white py-12 text-center">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Keep learning</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Sigue aprendiendo</h3>
         <p className="text-gray-500 mb-6">
-          Explore more React and Next.js patterns across this project.
+          Explora más patrones de React y Next.js en este proyecto.
         </p>
         <div className="flex justify-center gap-4 flex-wrap">
           <Link
@@ -541,7 +541,7 @@ export default function SuspenseLazyPage() {
             rel="noopener noreferrer"
             className="border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-50 transition"
           >
-            React Docs →
+            Documentación →
           </Link>
         </div>
       </div>
