@@ -200,6 +200,38 @@ export default function Home() {
               Ver producción →
             </Link>
           </div>
+
+          {/* Cache Revalidation */}
+          <div className="bg-gradient-to-br from-cyan-950 to-gray-900 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">🔄</div>
+            <h3 className="text-xl font-bold mb-3">Revalidación de Caché</h3>
+            <p className="text-gray-300 mb-6">
+              Las 4 capas de caché de Next.js, ISR, revalidatePath, revalidateTag,
+              webhooks bajo demanda y cómo depurar datos desactualizados.
+            </p>
+            <Link
+              href="/cache-revalidation"
+              className="inline-block bg-white text-cyan-900 font-semibold py-2 px-4 rounded-lg hover:bg-cyan-50 transition"
+            >
+              Ver caché →
+            </Link>
+          </div>
+
+          {/* Metadata */}
+          <div className="bg-gradient-to-br from-indigo-950 to-gray-900 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">🏷️</div>
+            <h3 className="text-xl font-bold mb-3">Metadata Estática y Dinámica</h3>
+            <p className="text-gray-300 mb-6">
+              Títulos, Open Graph, Twitter Cards, imágenes OG dinámicas con
+              ImageResponse, sitemap.xml, robots.txt y checklist SEO.
+            </p>
+            <Link
+              href="/metadata"
+              className="inline-block bg-white text-indigo-900 font-semibold py-2 px-4 rounded-lg hover:bg-indigo-50 transition"
+            >
+              Ver metadata →
+            </Link>
+          </div>
         </div>
 
         {/* CTA */}
