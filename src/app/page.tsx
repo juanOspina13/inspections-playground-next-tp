@@ -103,7 +103,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Learning — three cards */}
+        {/* Learning — six cards */}
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {/* Next.js Concepts */}
           <div className="bg-black text-white rounded-lg shadow-lg p-8">
@@ -150,6 +150,54 @@ export default function Home() {
               className="inline-block bg-white text-cyan-900 font-semibold py-2 px-4 rounded-lg hover:bg-cyan-50 transition"
             >
               Explorar carga diferida →
+            </Link>
+          </div>
+
+          {/* Form Validation */}
+          <div className="bg-gradient-to-br from-green-950 to-gray-900 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">🛡️</div>
+            <h3 className="text-xl font-bold mb-3">Validación de Formularios</h3>
+            <p className="text-gray-300 mb-6">
+              Envío de formularios con Server Actions, validación del lado del servidor
+              con Zod, errores inline y progressive enhancement.
+            </p>
+            <Link
+              href="/form-validation"
+              className="inline-block bg-white text-green-900 font-semibold py-2 px-4 rounded-lg hover:bg-green-50 transition"
+            >
+              Ver validación →
+            </Link>
+          </div>
+
+          {/* Server Actions */}
+          <div className="bg-gradient-to-br from-violet-950 to-gray-900 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">⚡</div>
+            <h3 className="text-xl font-bold mb-3">Server Actions</h3>
+            <p className="text-gray-300 mb-6">
+              Respuestas de Server Actions, useActionState, actualizaciones optimistas
+              con useOptimistic y seguridad en mutaciones del servidor.
+            </p>
+            <Link
+              href="/server-actions"
+              className="inline-block bg-white text-violet-900 font-semibold py-2 px-4 rounded-lg hover:bg-violet-50 transition"
+            >
+              Ver Server Actions →
+            </Link>
+          </div>
+
+          {/* Production Build */}
+          <div className="bg-gradient-to-br from-slate-800 to-gray-900 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">🚀</div>
+            <h3 className="text-xl font-bold mb-3">Build de Producción</h3>
+            <p className="text-gray-300 mb-6">
+              next build, estático vs dinámico, ISR, capas de caché, variables de
+              entorno, análisis de bundle y checklist de deploy.
+            </p>
+            <Link
+              href="/production-build"
+              className="inline-block bg-white text-slate-900 font-semibold py-2 px-4 rounded-lg hover:bg-slate-50 transition"
+            >
+              Ver producción →
             </Link>
           </div>
         </div>
