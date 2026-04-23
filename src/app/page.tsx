@@ -106,8 +106,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Learning — two cards side by side */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        {/* Learning — three cards */}
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           {/* Next.js Concepts */}
           <div className="bg-black text-white rounded-lg shadow-lg p-8">
             <div className="text-4xl mb-4">▲</div>
@@ -129,14 +129,30 @@ export default function Home() {
             <div className="text-4xl mb-4">🧩</div>
             <h3 className="text-xl font-bold mb-3">Server vs Client Components</h3>
             <p className="text-gray-300 mb-6">
-              When to use each, how to compose them, common patterns, and the pitfalls
-              that quietly hurt performance.
+              Cuándo usar cada uno, cómo componerlos, patrones comunes y las trampas
+              que afectan el rendimiento sin que te des cuenta.
             </p>
             <Link
               href="/server-vs-client"
               className="inline-block bg-white text-blue-900 font-semibold py-2 px-4 rounded-lg hover:bg-blue-50 transition"
             >
-              Learn the differences →
+              Ver diferencias →
+            </Link>
+          </div>
+
+          {/* Suspense & React.lazy */}
+          <div className="bg-gradient-to-br from-cyan-900 to-indigo-950 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">⏳</div>
+            <h3 className="text-xl font-bold mb-3">Suspense &amp; React.lazy</h3>
+            <p className="text-gray-300 mb-6">
+              Estados de carga declarativos, división de código bajo demanda y demo
+              en vivo de spinner — con patrones de streaming de Next.js.
+            </p>
+            <Link
+              href="/suspense-lazy"
+              className="inline-block bg-white text-cyan-900 font-semibold py-2 px-4 rounded-lg hover:bg-cyan-50 transition"
+            >
+              Explorar carga diferida →
             </Link>
           </div>
         </div>

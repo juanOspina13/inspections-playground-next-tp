@@ -4,22 +4,22 @@ const sections = [
   {
     id: 'what-are-rsc',
     number: 1,
-    title: 'What are Server Components?',
+    title: '¿Qué son los Server Components?',
     icon: '🖥️',
     color: 'blue',
-    summary: 'Components that render exclusively on the server — the new default in App Router',
+    summary: 'Componentes que se renderizan exclusivamente en el servidor — el nuevo valor por defecto en App Router',
     details: [
-      '**Server Components (RSC)** render on the server and send only HTML to the browser. No JavaScript is shipped for them.',
-      'They are the **default** in the Next.js App Router. Any file without `"use client"` at the top is a Server Component.',
-      'They can be `async` — you can `await` database calls, file reads, or fetch requests directly inside the component body.',
-      'They have access to server-only resources: file system, environment variables, databases, and backend services.',
-      'Since their code never reaches the browser, they can safely import secrets and server-side libraries.',
+      '**Los Server Components (RSC)** se renderizan en el servidor y envían solo HTML al navegador. No se envía JavaScript al cliente.',
+      'Son el valor **por defecto** en el App Router de Next.js. Cualquier archivo sin `"use client"` al inicio es un Server Component.',
+      'Pueden ser `async` — puedes usar `await` directamente en el cuerpo del componente para llamadas a la base de datos, archivos o fetch.',
+      'Tienen acceso a recursos exclusivos del servidor: sistema de archivos, variables de entorno, bases de datos y servicios backend.',
+      'Como su código nunca llega al navegador, pueden importar secretos y librerías solo del servidor de forma segura.',
     ],
-    code: `// app/dashboard/page.tsx  ← Server Component by default (no directive needed)
-import { db } from '@/lib/database';   // safe — stays on server
+    code: `// app/dashboard/page.tsx  ← Server Component por defecto (sin directiva)
+import { db } from '@/lib/database';   // seguro — permanece en el servidor
 
 export default async function DashboardPage() {
-  // Direct database query — no useEffect, no loading state, no API route needed
+  // Consulta directa a la BD — sin useEffect, sin estado de carga, sin rutas API
   const inspections = await db.query('SELECT * FROM inspections LIMIT 10');
   const stats = await db.query('SELECT COUNT(*) FROM inspections');
 
@@ -32,28 +32,28 @@ export default async function DashboardPage() {
   );
 }
 
-// ✅ Works in Server Components:
-//   - async/await at the top level
-//   - import secrets / DB clients
-//   - access process.env (without NEXT_PUBLIC_ prefix)
-//   - import large server-only libraries (they won't bloat the bundle)`,
-    tip: 'Think of Server Components as the "backend" of your UI — they fetch and prepare data, then hand off to Client Components for interactivity.',
+// ✅ Disponible en Server Components:
+//   - async/await al nivel superior
+//   - importar secretos / clientes de BD
+//   - acceder a process.env (sin prefijo NEXT_PUBLIC_)
+//   - importar librerías grandes solo-servidor (no inflan el bundle)`,
+    tip: 'Piensa en los Server Components como el "backend" de tu UI — obtienen y preparan datos, luego se los entregan a los Client Components para la interactividad.',
   },
   {
     id: 'what-are-client',
     number: 2,
-    title: 'What are Client Components?',
+    title: '¿Qué son los Client Components?',
     icon: '💻',
     color: 'violet',
-    summary: 'Interactive components that run in the browser — opt-in with "use client"',
+    summary: 'Componentes interactivos que se ejecutan en el navegador — se activan con "use client"',
     details: [
-      'Add `"use client"` at the **very top** of a file to mark it as a Client Component. This is an opt-in, not the default.',
-      'Client Components are pre-rendered on the server (HTML), then **hydrated** in the browser — so they get interactivity.',
-      'They have access to browser APIs: `window`, `document`, `localStorage`, `navigator`, event listeners.',
-      'They support React hooks: `useState`, `useEffect`, `useRef`, `useContext`, custom hooks, and third-party hooks.',
-      '`"use client"` creates a **boundary** — every module imported below that boundary is also treated as a Client Component.',
+      'Agrega `"use client"` al **principio** del archivo para marcarlo como Client Component. Es un opt-in, no el valor por defecto.',
+      'Los Client Components se pre-renderizan en el servidor (HTML) y luego se **hidratan** en el navegador — así obtienen interactividad.',
+      'Tienen acceso a las APIs del navegador: `window`, `document`, `localStorage`, `navigator`, event listeners.',
+      'Soportan hooks de React: `useState`, `useEffect`, `useRef`, `useContext`, hooks personalizados y hooks de terceros.',
+      '`"use client"` crea una **frontera** — cada módulo importado por debajo de esa frontera también se trata como Client Component.',
     ],
-    code: `'use client';  // ← This directive marks the file AND all its imports as Client Components
+    code: `'use client';  // ← Esta directiva marca el archivo Y todos sus imports como Client Components
 
 import { useState } from 'react';
 
@@ -62,7 +62,7 @@ export function InspectionFilters({ onFilterChange }: { onFilterChange: (f: stri
 
   function handleChange(newStatus: string) {
     setStatus(newStatus);
-    onFilterChange(newStatus);  // notify parent
+    onFilterChange(newStatus);  // notifica al padre
   }
 
   return (
@@ -80,127 +80,127 @@ export function InspectionFilters({ onFilterChange }: { onFilterChange: (f: stri
   );
 }
 
-// ✅ Works in Client Components:
+// ✅ Disponible en Client Components:
 //   - useState, useEffect, useRef, useContext
-//   - onClick, onChange, onSubmit handlers
-//   - Browser APIs (window, localStorage, navigator)
-//   - Third-party hooks and context providers`,
-    tip: '"use client" is a boundary declaration, not a runtime switch. It tells the React bundler where the server/client split happens.',
+//   - manejadores onClick, onChange, onSubmit
+//   - APIs del navegador (window, localStorage, navigator)
+//   - Hooks y context providers de terceros`,
+    tip: '"use client" es una declaración de frontera, no un interruptor en tiempo de ejecución. Le dice al bundler de React dónde ocurre la división servidor/cliente.',
   },
   {
     id: 'key-differences',
     number: 3,
-    title: 'Key Differences at a Glance',
+    title: 'Diferencias Clave de un Vistazo',
     icon: '⚖️',
     color: 'slate',
-    summary: 'Side-by-side comparison of capabilities, restrictions, and trade-offs',
+    summary: 'Comparación lado a lado de capacidades, restricciones y compromisos',
     details: [
-      '**Rendering environment**: Server Components run only on the server. Client Components run on both (SSR pre-render + browser hydration).',
-      '**Bundle size**: Server Components contribute zero JavaScript to the client bundle. Client Components are included in the JS bundle.',
-      '**Data access**: Server Components access backends directly. Client Components fetch via APIs or receive data as props.',
-      '**Interactivity**: Server Components cannot use state, effects, or event handlers. Client Components can use all React hooks.',
-      '**Async rendering**: Server Components can be `async` functions. Client Components cannot be `async` (use `useEffect` or SWR/React Query instead).',
+      '**Entorno de renderizado**: Los Server Components solo se ejecutan en el servidor. Los Client Components se ejecutan en ambos (SSR + hidratación en el navegador).',
+      '**Tamaño del bundle**: Los Server Components no contribuyen JavaScript al bundle del cliente. Los Client Components sí se incluyen en el bundle.',
+      '**Acceso a datos**: Los Server Components acceden al backend directamente. Los Client Components obtienen datos via APIs o reciben datos como props.',
+      '**Interactividad**: Los Server Components no pueden usar estado, efectos ni manejadores de eventos. Los Client Components pueden usar todos los hooks de React.',
+      '**Renderizado async**: Los Server Components pueden ser funciones `async`. Los Client Components no pueden ser `async` (usa `useEffect` o SWR/React Query).',
     ],
     code: `// ─────────────────────────────────────────────────────────
-//  CAPABILITY             SERVER COMPONENT   CLIENT COMPONENT
+//  CAPACIDAD              SERVER COMPONENT   CLIENT COMPONENT
 // ─────────────────────────────────────────────────────────
-//  async/await            ✅ YES             ❌ NO
-//  fetch / DB / FS        ✅ YES             ❌ NO (use API routes)
-//  process.env secrets    ✅ YES             ❌ NO
-//  useState / useReducer  ❌ NO              ✅ YES
-//  useEffect / useRef     ❌ NO              ✅ YES
-//  onClick / onChange     ❌ NO              ✅ YES
-//  window / localStorage  ❌ NO              ✅ YES
-//  Context Providers      ❌ NO              ✅ YES
-//  Suspense (as parent)   ✅ YES             ✅ YES
-//  JS bundle contribution ✅ ZERO            ⚠️  YES (included)
-//  SEO / first-paint      ✅ FAST            ⚠️  SLOWER (hydration)
+//  async/await            ✅ SÍ              ❌ NO
+//  fetch / BD / FS        ✅ SÍ              ❌ NO (usa rutas API)
+//  process.env secretos   ✅ SÍ              ❌ NO
+//  useState / useReducer  ❌ NO              ✅ SÍ
+//  useEffect / useRef     ❌ NO              ✅ SÍ
+//  onClick / onChange     ❌ NO              ✅ SÍ
+//  window / localStorage  ❌ NO              ✅ SÍ
+//  Context Providers      ❌ NO              ✅ SÍ
+//  Suspense (como padre)  ✅ SÍ              ✅ SÍ
+//  JS en el bundle        ✅ CERO            ⚠️  SÍ (incluido)
+//  SEO / first-paint      ✅ RÁPIDO          ⚠️  MÁS LENTO (hidratación)
 // ─────────────────────────────────────────────────────────`,
-    tip: 'When in doubt, start with a Server Component. Add "use client" only when you actually need interactivity or browser APIs.',
+    tip: 'Ante la duda, empieza con un Server Component. Agrega "use client" solo cuando realmente necesites interactividad o APIs del navegador.',
   },
   {
     id: 'when-server',
     number: 4,
-    title: 'When to Use Server Components',
+    title: 'Cuándo Usar Server Components',
     icon: '🖥️✅',
     color: 'green',
-    summary: 'Use them for data fetching, static content, layouts, and anything non-interactive',
+    summary: 'Úsalos para obtener datos, contenido estático, layouts y todo lo que no sea interactivo',
     details: [
-      '**Data fetching**: Fetch from databases, APIs, or the file system directly — no API route needed, no client-side loading state.',
-      '**Static or read-only UI**: Cards, tables, lists, and pages that display data without user interaction.',
-      '**Layout shells**: Headers, sidebars, and navigation that are shared across pages and don\'t need user-specific state.',
-      '**Large dependencies**: Libraries like `moment`, `lodash`, or markdown parsers stay on the server and never hit the client bundle.',
-      '**SEO-critical content**: Server-rendered HTML is immediately available to crawlers and improves Core Web Vitals (LCP, FID).',
+      '**Obtención de datos**: Consulta bases de datos, APIs o el sistema de archivos directamente — sin rutas API ni estado de carga en el cliente.',
+      '**UI estática o de solo lectura**: Tarjetas, tablas, listas y páginas que muestran datos sin interacción del usuario.',
+      '**Shells de layout**: Encabezados, barras laterales y navegación compartida que no necesitan estado específico del usuario.',
+      '**Dependencias pesadas**: Librerías como `moment`, `lodash` o parsers de markdown se quedan en el servidor y nunca llegan al bundle del cliente.',
+      '**Contenido crítico para SEO**: El HTML renderizado en servidor está disponible inmediatamente para los crawlers y mejora los Core Web Vitals (LCP, FID).',
     ],
-    code: `// ✅ Great Server Component use cases
+    code: `// ✅ Casos de uso ideales para Server Components
 
-// 1. Async data fetching — no boilerplate
+// 1. Obtención de datos async — sin boilerplate
 export default async function InspectionsPage() {
-  const data = await fetchInspections();  // runs on server
+  const data = await fetchInspections();  // se ejecuta en el servidor
   return <InspectionTable rows={data} />;
 }
 
-// 2. Accessing secrets safely
+// 2. Acceder a secretos de forma segura
 async function getProtectedData() {
   const res = await fetch('https://api.internal.com/data', {
     headers: { Authorization: \`Bearer \${process.env.API_SECRET}\` },
-    // process.env.API_SECRET is NEVER sent to the browser
+    // process.env.API_SECRET NUNCA se envía al navegador
   });
   return res.json();
 }
 
-// 3. Heavy libraries — zero bundle cost
-import { marked } from 'marked';         // 100kb library
-import { highlight } from 'highlight.js'; // 200kb library
+// 3. Librerías pesadas — sin costo en el bundle
+import { marked } from 'marked';         // librería de 100kb
+import { highlight } from 'highlight.js'; // librería de 200kb
 
 export default async function DocsPage({ params }: { params: { slug: string } }) {
   const raw = await readFile(\`docs/\${params.slug}.md\`, 'utf-8');
-  const html = marked(highlight(raw));    // runs only on server
+  const html = marked(highlight(raw));    // solo se ejecuta en el servidor
   return <article dangerouslySetInnerHTML={{ __html: html }} />;
 }`,
-    tip: 'Server Components shine when your component is mostly "show this data" with no click handlers or local state.',
+    tip: 'Los Server Components brillan cuando tu componente es principalmente "mostrar estos datos" sin manejadores de clic ni estado local.',
   },
   {
     id: 'when-client',
     number: 5,
-    title: 'When to Use Client Components',
+    title: 'Cuándo Usar Client Components',
     icon: '💻✅',
     color: 'amber',
-    summary: 'Use them for interactivity, browser APIs, and stateful UI',
+    summary: 'Úsalos para interactividad, APIs del navegador y UI con estado',
     details: [
-      '**User interaction**: Any component with onClick, onChange, onSubmit, drag-and-drop, or keyboard events.',
-      '**Local state**: Components that manage their own state with `useState` or `useReducer`.',
-      '**Side effects**: Components that need `useEffect` to sync with external systems, timers, or subscriptions.',
-      '**Browser-only APIs**: Reading `window.innerWidth`, `localStorage`, `navigator.geolocation`, `IntersectionObserver`.',
-      '**Context Providers**: Providers that wrap the tree must be Client Components because they maintain state (`createContext` + `useState`).',
+      '**Interacción del usuario**: Cualquier componente con onClick, onChange, onSubmit, drag-and-drop o eventos de teclado.',
+      '**Estado local**: Componentes que gestionan su propio estado con `useState` o `useReducer`.',
+      '**Efectos secundarios**: Componentes que necesitan `useEffect` para sincronizarse con sistemas externos, timers o suscripciones.',
+      '**APIs exclusivas del navegador**: Leer `window.innerWidth`, `localStorage`, `navigator.geolocation`, `IntersectionObserver`.',
+      '**Context Providers**: Los providers que envuelven el árbol deben ser Client Components porque mantienen estado (`createContext` + `useState`).',
     ],
     code: `'use client';
 
-// ✅ Great Client Component use cases
+// ✅ Casos de uso ideales para Client Components
 
-// 1. Interactive filter component
+// 1. Componente de filtro interactivo
 import { useState } from 'react';
 export function StatusFilter({ onChange }: { onChange: (s: string) => void }) {
   const [active, setActive] = useState('all');
   return (
     <select value={active} onChange={(e) => { setActive(e.target.value); onChange(e.target.value); }}>
-      <option value="all">All</option>
-      <option value="passed">Passed</option>
-      <option value="failed">Failed</option>
+      <option value="all">Todos</option>
+      <option value="passed">Aprobado</option>
+      <option value="failed">Fallido</option>
     </select>
   );
 }
 
-// 2. Component using browser APIs
+// 2. Componente que usa APIs del navegador
 export function ScrollToTop() {
   return (
     <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-      ↑ Top
+      ↑ Arriba
     </button>
   );
 }
 
-// 3. Context Provider (must be client)
+// 3. Context Provider (debe ser cliente)
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   return (
@@ -209,23 +209,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     </ThemeContext.Provider>
   );
 }`,
-    tip: 'Keep Client Components as small and leaf-like as possible. Push state down so only the interactive part opts in to the client.',
+    tip: 'Mantén los Client Components lo más pequeños y hoja posible. Empuja el estado hacia abajo para que solo la parte interactiva use el cliente.',
   },
   {
     id: 'composing',
     number: 6,
-    title: 'Composing Them Together',
+    title: 'Componiéndolos Juntos',
     icon: '🧩',
     color: 'cyan',
-    summary: 'The golden pattern: Server Components own the tree, Client Components are leaves',
+    summary: 'El patrón dorado: los Server Components controlan el árbol, los Client Components son las hojas',
     details: [
-      'Server Components **can render** Client Components by importing and using them like any JSX element.',
-      'Client Components **cannot import** Server Components directly (they would be treated as Client Components).',
-      'To use a Server Component inside a Client Component, pass it as **children** or a **prop** (it\'s already rendered server-side).',
-      'This pattern — called the "donut pattern" — keeps most of your tree on the server with interactive islands on the client.',
-      'Wrapping slow Server Components in `<Suspense>` allows streaming: fast parts render immediately while slow ones load.',
+      'Los Server Components **pueden renderizar** Client Components importándolos y usándolos como cualquier elemento JSX.',
+      'Los Client Components **no pueden importar** Server Components directamente (se tratarían como Client Components).',
+      'Para usar un Server Component dentro de un Client Component, pásalo como **children** o como **prop** (ya está renderizado en el servidor).',
+      'Este patrón — llamado "patrón donut" — mantiene la mayor parte del árbol en el servidor con islas interactivas en el cliente.',
+      'Envolver Server Components lentos en `<Suspense>` permite streaming: las partes rápidas se renderizan inmediatamente mientras las lentas cargan.',
     ],
-    code: `// ✅ CORRECT: Server Component renders a Client Component (normal import)
+    code: `// ✅ CORRECTO: Server Component renderiza un Client Component (import normal)
 // app/dashboard/page.tsx  ← Server Component
 import { InspectionFilters } from '@/components/InspectionFilters';  // Client Component
 import { InspectionTable }   from '@/components/InspectionTable';    // Server Component
@@ -234,63 +234,63 @@ export default async function DashboardPage() {
   const data = await fetchInspections();
   return (
     <div>
-      <InspectionFilters />          {/* Client — interactive */}
-      <InspectionTable rows={data} /> {/* Server — data display */}
+      <InspectionFilters />          {/* Cliente — interactivo */}
+      <InspectionTable rows={data} /> {/* Servidor — muestra datos */}
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
 
-// ✅ CORRECT: Pass Server Component as children to a Client Component
+// ✅ CORRECTO: Pasar Server Component como children a un Client Component
 // app/layout.tsx  ← Server Component
 import { Sidebar } from '@/components/Sidebar';  // Client Component
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Sidebar>
-      {children}  {/* children is a Server Component — already rendered */}
+      {children}  {/* children es un Server Component — ya renderizado */}
     </Sidebar>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
 
-// ❌ WRONG: Importing a Server Component inside a Client Component
+// ❌ INCORRECTO: Importar un Server Component dentro de un Client Component
 'use client';
-// This import turns ServerOnlyComponent into a Client Component!
+// ¡Este import convierte ServerOnlyComponent en Client Component!
 import { ServerOnlyComponent } from './ServerOnlyComponent';`,
-    tip: 'Use children props to thread Server Components through Client Component wrappers. This keeps the server/client split clean.',
+    tip: 'Usa la prop children para pasar Server Components a través de wrappers de Client Components. Esto mantiene la división servidor/cliente limpia.',
   },
   {
     id: 'data-down',
     number: 7,
-    title: 'Passing Server Data to Client Components',
+    title: 'Pasando Datos del Servidor a Client Components',
     icon: '📦',
     color: 'indigo',
-    summary: 'Fetch on the server, serialize as props — keep secrets and heavy logic server-side',
+    summary: 'Obtén en el servidor, serializa como props — mantén secretos y lógica pesada en el servidor',
     details: [
-      'The cleanest pattern: fetch data in a Server Component, then pass it as **serializable props** to Client Components.',
-      'Only plain, JSON-serializable values can cross the server/client boundary: strings, numbers, arrays, plain objects.',
-      '**Cannot** pass: functions, class instances, Dates (use `.toISOString()`), Maps, Sets, or circular references as props.',
-      'For complex interactions, consider splitting: Server Component fetches initial data, Client Component manages client-side state on top of it.',
-      'Use `"server-only"` package in files that should never be imported by Client Components — it throws a build-time error if imported.',
+      'El patrón más limpio: obtén datos en un Server Component y pásalos como **props serializables** a los Client Components.',
+      'Solo valores planos y serializables en JSON pueden cruzar la frontera servidor/cliente: strings, números, arrays, objetos planos.',
+      '**No puedes** pasar: funciones, instancias de clases, Dates (usa `.toISOString()`), Maps, Sets ni referencias circulares como props.',
+      'Para interacciones complejas, considera dividir: Server Component obtiene datos iniciales, Client Component gestiona el estado del cliente sobre ellos.',
+      'Usa el paquete `"server-only"` en archivos que nunca deben ser importados por Client Components — lanza un error de build si se importan.',
     ],
-    code: `// ✅ Server fetches → Client displays and interacts
+    code: `// ✅ Servidor obtiene → Cliente muestra e interactúa
 
 // app/inspections/page.tsx  ← Server Component
 import { InspectionDashboard } from '@/components/InspectionDashboard';
 
 export default async function InspectionsPage() {
-  // Runs on server: has DB access, secrets, heavy computation
+  // Se ejecuta en el servidor: tiene acceso a BD, secretos, cómputo pesado
   const inspections = await db.findMany({ where: { active: true } });
-  const summary = computeStats(inspections); // CPU-heavy — stays on server
+  const summary = computeStats(inspections); // CPU-intensivo — permanece en el servidor
 
-  // Pass only serializable data to the client
+  // Pasa solo datos serializables al cliente
   return (
     <InspectionDashboard
-      initialData={inspections}  // ✅ plain array of objects
-      summary={summary}           // ✅ plain object with numbers
+      initialData={inspections}  // ✅ array plano de objetos
+      summary={summary}           // ✅ objeto plano con números
     />
   );
 }
@@ -306,7 +306,7 @@ export function InspectionDashboard({
   initialData: Inspection[];
   summary: InspectionSummary;
 }) {
-  // Client manages filtering/sorting on top of server-fetched data
+  // El cliente gestiona filtrado/ordenamiento sobre los datos del servidor
   const [filter, setFilter] = useState('all');
   const filtered = initialData.filter(
     (i) => filter === 'all' || i.status === filter
@@ -320,40 +320,40 @@ export function InspectionDashboard({
     </div>
   );
 }`,
-    tip: 'Serialize Dates as ISO strings. Pass only the minimal data the Client Component needs — not the whole DB record.',
+    tip: 'Serializa las Dates como strings ISO. Pasa solo los datos mínimos que necesita el Client Component — no todo el registro de la base de datos.',
   },
   {
     id: 'boundaries',
     number: 8,
-    title: 'Understanding the "use client" Boundary',
+    title: 'Entendiendo la Frontera "use client"',
     icon: '🚧',
     color: 'orange',
-    summary: 'The boundary propagates down — everything imported becomes a Client Component',
+    summary: 'La frontera se propaga hacia abajo — todo lo importado se convierte en Client Component',
     details: [
-      '`"use client"` propagates to **all imports** in that file. If `ComponentA.tsx` has `"use client"`, every module it imports becomes a Client Component.',
-      'You do **not** need `"use client"` in every file — only in the root of each client subtree.',
-      'A single top-level `"use client"` boundary covers an entire component tree of imports.',
-      'Placing `"use client"` too high in the tree (e.g., in layout.tsx) accidentally converts the whole app to Client Components.',
-      'The goal is to have the boundary as **deep and narrow** as possible to maximize server rendering.',
+      '`"use client"` se propaga a **todos los imports** en ese archivo. Si `ComponentA.tsx` tiene `"use client"`, cada módulo que importa se convierte en Client Component.',
+      '**No necesitas** `"use client"` en cada archivo — solo en la raíz de cada subárbol de cliente.',
+      'Una sola frontera `"use client"` en el nivel superior cubre todo un árbol de componentes importados.',
+      'Poner `"use client"` demasiado alto en el árbol (p.ej., en layout.tsx) convierte accidentalmente toda la app en Client Components.',
+      'El objetivo es que la frontera esté lo más **profunda y estrecha** posible para maximizar el renderizado en servidor.',
     ],
-    code: `// ❌ BAD: "use client" too high — accidentally converts everything
+    code: `// ❌ MAL: "use client" demasiado alto — convierte todo accidentalmente
 // app/layout.tsx
-'use client';  // ← Now ALL children and imports are Client Components!
+'use client';  // ← ¡Ahora TODOS los hijos e imports son Client Components!
 export default function RootLayout({ children }) { ... }
 
 // ─────────────────────────────────────────────────────────────
 
-// ✅ GOOD: "use client" only where needed
-// app/layout.tsx  ← Server Component (no directive)
+// ✅ BIEN: "use client" solo donde se necesita
+// app/layout.tsx  ← Server Component (sin directiva)
 import { Header }   from '@/components/Header';    // Server Component
-import { Providers } from '@/components/Providers'; // Client Component (has "use client")
+import { Providers } from '@/components/Providers'; // Client Component (tiene "use client")
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html>
       <body>
-        <Header />       {/* stays on server */}
-        <Providers>      {/* client boundary starts here */}
+        <Header />       {/* permanece en el servidor */}
+        <Providers>      {/* la frontera de cliente empieza aquí */}
           {children}
         </Providers>
       </body>
@@ -363,112 +363,112 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 // ─────────────────────────────────────────────────────────────
 
-// ✅ Narrow boundary: only the interactive button is a Client Component
+// ✅ Frontera estrecha: solo el botón interactivo es Client Component
 // components/LikeButton.tsx
-'use client';  // boundary is just this one small component
+'use client';  // la frontera es solo este pequeño componente
 import { useState } from 'react';
 export function LikeButton() {
   const [liked, setLiked] = useState(false);
   return <button onClick={() => setLiked(!liked)}>{liked ? '❤️' : '🤍'}</button>;
 }`,
-    tip: 'Audit your "use client" placement. Each one pulls a subtree into the client bundle. Narrow boundaries = smaller bundles.',
+    tip: 'Audita la ubicación de tus "use client". Cada uno arrastra un subárbol al bundle del cliente. Fronteras estrechas = bundles más pequeños.',
   },
   {
     id: 'anti-patterns',
     number: 9,
-    title: 'Common Mistakes & Anti-Patterns',
+    title: 'Errores Comunes y Anti-Patrones',
     icon: '⚠️',
     color: 'red',
-    summary: 'Pitfalls that reduce performance, break builds, or waste the RSC model',
+    summary: 'Trampas que reducen el rendimiento, rompen los builds o desperdician el modelo RSC',
     details: [
-      '**Converting everything to Client Components**: Adding `"use client"` to avoid errors defeats the purpose of RSC. Diagnose the root cause instead.',
-      '**Fetching in useEffect when a Server Component could do it**: Client-side fetching is slower (waterfall) and exposes data-fetching logic to the browser.',
-      '**Passing non-serializable values as props**: Functions, class instances, and Dates (as objects) cannot cross the server/client boundary.',
-      '**Importing server-only modules in Client Components**: Imports like `fs`, `crypto`, or DB clients in a Client Component file will crash at build time.',
-      '**Huge Client Component trees**: Nesting many Client Components without any Server Components re-introduces the "classic React" bundle cost.',
+      '**Convertir todo en Client Components**: Agregar `"use client"` para evitar errores anula el propósito de RSC. Diagnostica la causa raíz en su lugar.',
+      '**Hacer fetch en useEffect cuando un Server Component podría hacerlo**: El fetch en el cliente es más lento (waterfall) y expone la lógica de obtención al navegador.',
+      '**Pasar valores no serializables como props**: Funciones, instancias de clases y Dates (como objetos) no pueden cruzar la frontera servidor/cliente.',
+      '**Importar módulos solo-servidor en Client Components**: Imports como `fs`, `crypto` o clientes de BD en un archivo Client Component fallarán en el build.',
+      '**Árboles enormes de Client Components**: Anidar muchos Client Components sin ningún Server Component re-introduce el costo de bundle del "React clásico".',
     ],
-    code: `// ❌ Anti-pattern 1: Fetching in useEffect when RSC can do it
+    code: `// ❌ Anti-patrón 1: Fetch en useEffect cuando RSC puede hacerlo
 'use client';
 export function InspectionList() {
   const [data, setData] = useState([]);
   useEffect(() => {
     fetch('/api/inspections').then(r => r.json()).then(setData);
-    // Problems: loading state, waterfall, client bundle, no SSR
+    // Problemas: estado de carga, waterfall, bundle en cliente, sin SSR
   }, []);
   return <Table data={data} />;
 }
 
-// ✅ Instead: fetch in a Server Component
+// ✅ En su lugar: fetch en un Server Component
 export default async function InspectionsPage() {
-  const data = await fetchInspections();  // fast, SSR, no bundle cost
-  return <Table data={data} />;           // Table is a Server Component too
+  const data = await fetchInspections();  // rápido, SSR, sin costo de bundle
+  return <Table data={data} />;           // Table también es Server Component
 }
 
 // ─────────────────────────────────────────────────────────────
 
-// ❌ Anti-pattern 2: Passing a function as a prop (crashes at runtime)
-// Server Component:
-<ClientButton onClick={() => console.log('hi')} />
-// Error: Functions cannot be passed directly to Client Components
-// because they're not serializable. Use Server Actions instead:
+// ❌ Anti-patrón 2: Pasar una función como prop (crash en runtime)
+// Desde un Server Component:
+<ClientButton onClick={() => console.log('hola')} />
+// Error: las funciones no se pueden pasar directamente a Client Components
+// porque no son serializables. Usa Server Actions:
 
-// ✅ Server Action as prop:
+// ✅ Server Action como prop:
 async function handleClick() {
   'use server';
-  // ... server-side logic
+  // ... lógica en el servidor
 }
 <ClientButton action={handleClick} />
 
 // ─────────────────────────────────────────────────────────────
 
-// ❌ Anti-pattern 3: Importing server-only modules in a client file
+// ❌ Anti-patrón 3: Importar módulos solo-servidor en un archivo de cliente
 'use client';
-import { readFileSync } from 'fs';  // 💥 Build error — fs is server-only`,
-    tip: 'If you find yourself adding "use client" to fix an error, stop and ask: "Can this component be a Server Component instead?"',
+import { readFileSync } from 'fs';  // 💥 Error de build — fs es solo del servidor`,
+    tip: 'Si te encuentras agregando "use client" para corregir un error, detente y pregúntate: "¿Puede este componente ser un Server Component?"',
   },
   {
     id: 'practical-checklist',
     number: 10,
-    title: 'Decision Checklist',
+    title: 'Lista de Verificación para Decidir',
     icon: '✅',
     color: 'teal',
-    summary: 'A quick decision tree to pick the right component type every time',
+    summary: 'Un árbol de decisión rápido para elegir el tipo de componente correcto siempre',
     details: [
-      '**Does it fetch data or access the backend?** → Server Component.',
-      '**Does it use `useState`, `useReducer`, or custom hooks with state?** → Client Component.',
-      '**Does it handle events (`onClick`, `onChange`, etc.)?** → Client Component.',
-      '**Does it use `useEffect` or `useRef`?** → Client Component.',
-      '**Does it use browser APIs (`window`, `localStorage`, etc.)?** → Client Component.',
-      '**Is it a Context Provider?** → Client Component (wrap it narrow, pass `children` from Server Components through it).',
-      '**Otherwise (static/display-only)?** → Server Component — enjoy the free performance.',
+      '**¿Obtiene datos o accede al backend?** → Server Component.',
+      '**¿Usa `useState`, `useReducer` o hooks personalizados con estado?** → Client Component.',
+      '**¿Maneja eventos (`onClick`, `onChange`, etc.)?** → Client Component.',
+      '**¿Usa `useEffect` o `useRef`?** → Client Component.',
+      '**¿Usa APIs del navegador (`window`, `localStorage`, etc.)?** → Client Component.',
+      '**¿Es un Context Provider?** → Client Component (mantenlo estrecho, pasa `children` de Server Components a través de él).',
+      '**¿Ninguna de las anteriores (solo muestra datos)?** → Server Component — disfruta el rendimiento gratis.',
     ],
-    code: `// Quick mental model — ask these questions in order:
+    code: `// Modelo mental rápido — haz estas preguntas en orden:
 
-function decideComponentType(component) {
-  if (component.fetchesData || component.accessesDatabase)   return 'Server Component';
-  if (component.usesState || component.usesReducer)          return 'Client Component';
-  if (component.hasEventHandlers)                            return 'Client Component';
-  if (component.usesEffectOrRef)                             return 'Client Component';
-  if (component.usesBrowserAPIs)                             return 'Client Component';
-  if (component.isContextProvider)                           return 'Client Component';
+function decidirTipoDeComponente(componente) {
+  if (componente.obtieneDatos || componente.accedeBD)        return 'Server Component';
+  if (componente.usaEstado || componente.usaReducer)         return 'Client Component';
+  if (componente.tieneEventHandlers)                         return 'Client Component';
+  if (componente.usaEffectORef)                              return 'Client Component';
+  if (componente.usaAPIDelNavegador)                         return 'Client Component';
+  if (componente.esContextProvider)                          return 'Client Component';
 
-  // Display-only, no side effects → Server Component (default)
+  // Solo muestra datos, sin efectos secundarios → Server Component (por defecto)
   return 'Server Component';
 }
 
 // ─────────────────────────────────────────────────────────────
-// Real-world split example for an Inspections Dashboard:
+// Ejemplo real de división para un Dashboard de Inspecciones:
 //
-// app/dashboard/page.tsx                ← Server (async, fetches data)
-//   └─ <StatsCards data={...} />        ← Server (display only)
-//   └─ <InspectionFilters />            ← Client (useState, onChange)
+// app/dashboard/page.tsx                ← Servidor (async, obtiene datos)
+//   └─ <StatsCards data={...} />        ← Servidor (solo muestra datos)
+//   └─ <InspectionFilters />            ← Cliente (useState, onChange)
 //   └─ <Suspense fallback={<Skeleton/>}>
-//        └─ <InspectionTable />         ← Server (async, fetches with params)
-//   └─ <ExportButton />                 ← Client (onClick, downloads CSV)
+//        └─ <InspectionTable />         ← Servidor (async, obtiene con params)
+//   └─ <ExportButton />                 ← Cliente (onClick, descarga CSV)
 //
-// Result: ~90% of the tree is server-rendered, only 2 leaf
-// components ship JavaScript to the browser.`,
-    tip: 'The ideal app has a server-rendered shell with small, focused Client Component islands at the edges for interactivity.',
+// Resultado: ~90% del árbol se renderiza en servidor, solo 2 componentes
+// hoja envían JavaScript al navegador.`,
+    tip: 'La app ideal tiene un shell renderizado en servidor con pequeñas islas de Client Components enfocadas en los bordes para la interactividad.',
   },
 ];
 
@@ -500,19 +500,19 @@ export default function ServerVsClientPage() {
             Client Components
           </h1>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            When to use each, how they work, how to compose them, and the patterns
-            that keep your app fast and your bundle small.
+            Cuándo usar cada uno, cómo funcionan, cómo componerlos y los patrones
+            que mantienen tu app rápida y tu bundle pequeño.
           </p>
 
           {/* Quick legend */}
           <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
             <span className="flex items-center gap-2 bg-blue-900/50 border border-blue-700 rounded-full px-4 py-1.5">
               <span className="w-2 h-2 rounded-full bg-blue-400 inline-block" />
-              <strong>Server Component</strong> — renders on server, zero JS bundle
+              <strong>Server Component</strong> — se renderiza en servidor, cero JS en el bundle
             </span>
             <span className="flex items-center gap-2 bg-violet-900/50 border border-violet-700 rounded-full px-4 py-1.5">
               <span className="w-2 h-2 rounded-full bg-violet-400 inline-block" />
-              <strong>Client Component</strong> — hydrated in browser, interactive
+              <strong>Client Component</strong> — se hidrata en el navegador, interactivo
             </span>
           </div>
 
@@ -523,13 +523,13 @@ export default function ServerVsClientPage() {
               rel="noopener noreferrer"
               className="bg-white text-black font-semibold px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition"
             >
-              Next.js Docs →
+              Documentación →
             </Link>
             <Link
               href="/"
               className="border border-gray-600 text-gray-300 font-semibold px-5 py-2 rounded-full text-sm hover:border-gray-400 transition"
             >
-              ← Back to Home
+              ← Inicio
             </Link>
           </div>
         </div>
@@ -538,7 +538,7 @@ export default function ServerVsClientPage() {
       {/* Table of contents */}
       <div className="max-w-4xl mx-auto px-4 py-10">
         <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-4">
-          Topics covered
+          Temas cubiertos
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {sections.map((s) => {
@@ -603,7 +603,7 @@ export default function ServerVsClientPage() {
               {/* Code block */}
               <div className="mt-5 mx-6 rounded-xl overflow-hidden border border-gray-800">
                 <div className="bg-gray-900 px-4 py-2 flex items-center justify-between">
-                  <span className="text-gray-400 text-xs font-mono">Example</span>
+                  <span className="text-gray-400 text-xs font-mono">Ejemplo</span>
                   <div className="flex gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-red-500" />
                     <span className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -620,7 +620,7 @@ export default function ServerVsClientPage() {
               {/* Tip */}
               <div className="mx-6 mt-4 mb-6">
                 <div className={`rounded-lg border px-4 py-3 text-sm ${colors.tip}`}>
-                  <span className="font-semibold">💡 Tip: </span>
+                  <span className="font-semibold">💡 Consejo: </span>
                   {section.tip}
                 </div>
               </div>
@@ -631,9 +631,9 @@ export default function ServerVsClientPage() {
 
       {/* Footer CTA */}
       <div className="border-t border-gray-200 bg-white py-12 text-center">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Keep learning</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Sigue aprendiendo</h3>
         <p className="text-gray-500 mb-6">
-          See these patterns in action across the rest of this project.
+          Ve estos patrones en acción en el resto de este proyecto.
         </p>
         <div className="flex justify-center gap-4 flex-wrap">
           <Link
@@ -646,7 +646,7 @@ export default function ServerVsClientPage() {
             href="/dashboard"
             className="border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-50 transition"
           >
-            View the Dashboard →
+            Ver el Dashboard →
           </Link>
           <Link
             href="https://nextjs.org/docs/app/building-your-application/rendering"
@@ -654,7 +654,7 @@ export default function ServerVsClientPage() {
             rel="noopener noreferrer"
             className="border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-50 transition"
           >
-            Official Docs →
+            Documentación oficial →
           </Link>
         </div>
       </div>
