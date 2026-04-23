@@ -106,20 +106,39 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Next.js Concepts */}
-        <div className="bg-black text-white rounded-lg shadow-lg p-8 mb-12">
-          <div className="text-4xl mb-4">▲</div>
-          <h3 className="text-xl font-bold mb-3">Conceptos de Next.js</h3>
-          <p className="text-gray-300 mb-6">
-            Referencia visual de los 14 conceptos principales del curso oficial de Next.js:
-            routing, data fetching, streaming, Server Actions, autenticación, metadata y más.
-          </p>
-          <Link
-            href="/nextjs-concepts"
-            className="inline-block bg-white text-black font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition"
-          >
-            Ver conceptos →
-          </Link>
+        {/* Learning — two cards side by side */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          {/* Next.js Concepts */}
+          <div className="bg-black text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">▲</div>
+            <h3 className="text-xl font-bold mb-3">Conceptos de Next.js</h3>
+            <p className="text-gray-300 mb-6">
+              Referencia visual de los 14 conceptos principales del curso oficial de Next.js:
+              routing, data fetching, streaming, Server Actions, autenticación, metadata y más.
+            </p>
+            <Link
+              href="/nextjs-concepts"
+              className="inline-block bg-white text-black font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition"
+            >
+              Ver conceptos →
+            </Link>
+          </div>
+
+          {/* Server vs Client Components */}
+          <div className="bg-gradient-to-br from-blue-950 to-gray-900 text-white rounded-lg shadow-lg p-8">
+            <div className="text-4xl mb-4">🧩</div>
+            <h3 className="text-xl font-bold mb-3">Server vs Client Components</h3>
+            <p className="text-gray-300 mb-6">
+              When to use each, how to compose them, common patterns, and the pitfalls
+              that quietly hurt performance.
+            </p>
+            <Link
+              href="/server-vs-client"
+              className="inline-block bg-white text-blue-900 font-semibold py-2 px-4 rounded-lg hover:bg-blue-50 transition"
+            >
+              Learn the differences →
+            </Link>
+          </div>
         </div>
 
         {/* CTA */}
